@@ -1,10 +1,24 @@
 const textArea = document.getElementById("text_to_summarize");
 const charCount = document.getElementById('char-count');
 const submitButton = document.getElementById("submit-button");
+const defaultTextBtn = document.getElementById("default-text-btn");
 const summarizedTextArea = document.getElementById("summary");
 const copyBtn = document.getElementById("copyButton");
 
 submitButton.disabled = true;
+
+// Sample text for testing
+const sampleText = `Artificial Intelligence (AI) has emerged as one of the most transformative technologies of the 21st century, revolutionizing industries and reshaping how we live and work. From virtual assistants like Siri and Alexa to advanced machine learning algorithms that power recommendation systems, AI is becoming increasingly integrated into our daily lives.
+
+The field of AI encompasses various subfields, including machine learning, natural language processing, computer vision, and robotics. Machine learning, in particular, has seen remarkable advancements with the development of deep learning neural networks that can process vast amounts of data and identify complex patterns.
+
+In healthcare, AI is being used to diagnose diseases, predict patient outcomes, and develop personalized treatment plans. Medical imaging systems powered by AI can detect early signs of cancer and other conditions with remarkable accuracy, often outperforming human radiologists.
+
+The business world has also embraced AI for process automation, customer service, and data analysis. Companies are using AI-powered chatbots to handle customer inquiries, predictive analytics to forecast market trends, and intelligent automation to streamline operations.
+
+However, the rapid advancement of AI also raises important ethical considerations. Issues such as algorithmic bias, privacy concerns, and the potential impact on employment need to be carefully addressed. As AI systems become more sophisticated, ensuring they are developed and deployed responsibly becomes increasingly crucial.
+
+The future of AI holds immense promise, with potential applications ranging from autonomous vehicles and smart cities to advanced scientific research and space exploration. As we continue to push the boundaries of what's possible, it's essential to balance innovation with ethical considerations and ensure that AI benefits all of humanity.`;
 
 textArea.addEventListener('input', function() {
   charCount.textContent = `${textArea.value.length}/100,000 characters`;
@@ -12,19 +26,30 @@ textArea.addEventListener('input', function() {
 
 textArea.addEventListener("input", verifyTextLength);
 submitButton.addEventListener("click", submitData);
+defaultTextBtn.addEventListener("click", addDefaultText);
 
 function verifyTextLength(e) {
- // The e.target property gives us the HTML element that triggered the event, which in this case is the textarea. We save this to a variable called 'textarea'
   const textarea = e.target;
 
-  // Verify the TextArea value.
   if (textarea.value.length > 200 && textarea.value.length < 100000) {
-    // Enable the button when text area has value.
     submitButton.disabled = false;
+    submitButton.style.opacity = "1";
   } else {
-    // Disable the button when text area is empty.
     submitButton.disabled = true;
+    submitButton.style.opacity = "0.6";
   }
+}
+
+function addDefaultText() {
+  textArea.value = sampleText;
+  charCount.textContent = `${textArea.value.length}/100,000 characters`;
+  verifyTextLength({ target: textArea });
+  
+  // Add a subtle animation effect
+  textArea.style.transform = "scale(1.02)";
+  setTimeout(() => {
+    textArea.style.transform = "scale(1)";
+  }, 200);
 }
 
 copyBtn.addEventListener("click", function () {
@@ -35,7 +60,6 @@ copyBtn.addEventListener("click", function () {
 function submitData(e) {
   console.log("Submitted\n");
 
- // This is used to add animation to the submit button
   submitButton.classList.add("submit-button--loading");
 
   const text_to_summarize = textArea.value;
@@ -54,23 +78,29 @@ function submitData(e) {
     redirect: 'follow'
   };
 
-  // Send the text to the server using fetch API
-
- // Note - here we can omit the “baseUrl” we needed in Postman and just use a relative path to “/summarize” because we will be calling the API from our Replit!  
-  fetch('https://ai-text-summarizer-app-gold.vercel.app/api/summarize', requestOptions)
-    .then(response => response.text()) // Response will be summarized text
+  fetch('/api/summarize', requestOptions)
+    .then(response => response.text())
     .then(summary => {
-      // Do something with the summary response from the back end API!
-
-      // Update the output text area with new summary
       summarizedTextArea.value = summary;
-
-      // Stop the spinning loading animation
       submitButton.classList.remove("submit-button--loading");
       copyBtn.style.display = "inline-block";
+      
+      // Add success animation
+      summarizedTextArea.style.transform = "scale(1.02)";
+      setTimeout(() => {
+        summarizedTextArea.style.transform = "scale(1)";
+      }, 200);
     })
     .catch(error => {
       console.log(error.message);
+      submitButton.classList.remove("submit-button--loading");
+      
+      // Show error message
+      summarizedTextArea.value = "Sorry, there was an error generating the summary. Please try again.";
+      summarizedTextArea.style.color = "#e74c3c";
+      setTimeout(() => {
+        summarizedTextArea.style.color = "#333";
+      }, 3000);
     });
 }
 
@@ -81,5 +111,14 @@ function copyToClipboard(text) {
   textarea.select();
   document.execCommand("copy");
   document.body.removeChild(textarea);
-  alert("Copied to clipboard");
+  
+  // Show success message
+  const originalText = copyBtn.innerHTML;
+  copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+  copyBtn.style.background = 'linear-gradient(135deg, #27ae60 0%, #2ecc71 100%)';
+  
+  setTimeout(() => {
+    copyBtn.innerHTML = originalText;
+    copyBtn.style.background = 'linear-gradient(135deg, #27ae60 0%, #2ecc71 100%)';
+  }, 2000);
 }

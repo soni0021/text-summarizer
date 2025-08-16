@@ -39,7 +39,7 @@
 
 ### **BackEnd:** ![NodeJS](https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white) &nbsp; ![ExpressJS](https://img.shields.io/badge/Express.js-404D59?style=for-the-badge)
 
-### **API:** Hugging Face BART model for text summarization
+### **API:** Google Gemini 2.5 Flash model for text summarization
 
 
 ## Getting Started
@@ -47,7 +47,7 @@
 ### Prerequisites
 
 - Node.js and npm installed on your machine
-- Hugging Face API token
+- Google Gemini API key
 
 ### Getting Started
 
@@ -55,12 +55,19 @@
    ```bash
    git clone https://github.com/vansh-codes/AI-Text-Summarizer-App.git
    ```
-2. Create a `.env` file in the root directory and add your Hugging Face API token:
+2. Create a `.env` file in the root directory and add your Google Gemini API key:
    ```bash
-   ACCESS_TOKEN=your_hugging_face_api_token
+   GEMINI_API_KEY=your_gemini_api_key
    ```
-3. run `node index.js`
-4. Open `localhost:3000` in your web browser to start using the application.
+3. Install dependencies:
+   ```bash
+   npm install
+   ```
+4. Run the application:
+   ```bash
+   npm start
+   ```
+5. Open `localhost:3000` in your web browser to start using the application.
 
 ## 🌐Web Application
 1. Access here: [AI-Text-Summarizer](https://ai-text-summarizer-app-gold.vercel.app/)
@@ -87,7 +94,7 @@
 ```
 
 ### **API Integration**
-The app uses the Hugging Face BART model for text summarization. The API call is made using the `axios` library in the `script.js` file. Ensure that your Hugging Face API token is set correctly in the `.env` file.
+The app uses the Google Gemini 2.5 Flash model for text summarization. The API call is made using the `@google/generative-ai` library in the `summarize.js` file. Ensure that your Google Gemini API key is set correctly in the `.env` file.
 
 
 ## Contributing
